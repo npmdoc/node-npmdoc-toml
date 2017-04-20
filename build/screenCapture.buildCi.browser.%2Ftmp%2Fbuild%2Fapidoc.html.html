@@ -1,0 +1,486 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a>toml (v2.3.2)</a>
+</h1>
+<h4>TOML parser for Node.js (parses TOML spec v0.4.0)</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.toml">module toml</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.toml.parse">
+            function <span class="apidocSignatureSpan">toml.</span>parse
+            <span class="apidocSignatureSpan">(input)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">toml.</span>compiler</span>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">toml.</span>parser</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.toml.compiler">module toml.compiler</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.toml.compiler.compile">
+            function <span class="apidocSignatureSpan">toml.compiler.</span>compile
+            <span class="apidocSignatureSpan">(nodes)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.toml.parser">module toml.parser</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.toml.parser.SyntaxError">
+            function <span class="apidocSignatureSpan">toml.parser.</span>SyntaxError
+            <span class="apidocSignatureSpan">(message, expected, found, offset, line, column)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.toml.parser.parse">
+            function <span class="apidocSignatureSpan">toml.parser.</span>parse
+            <span class="apidocSignatureSpan">(input)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.toml" id="apidoc.module.toml">module toml</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.toml.parse" id="apidoc.element.toml.parse">
+        function <span class="apidocSignatureSpan">toml.</span>parse
+        <span class="apidocSignatureSpan">(input)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">parse = function (input) {
+  var nodes = parser.parse(input.toString());
+  return compiler.compile(nodes);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+### Standalone
+
+Say you have some awesome TOML in a variable called `someTomlString`. Maybe it came from the web; maybe it came from a file; wherever
+ it came from, it came asynchronously! Let's turn that sucker into a JavaScript object.
+
+```javascript
+var toml = require('toml');
+var data = toml.<span class="apidocCodeKeywordSpan">parse</span>(someTomlString);
+console.dir(data);
+```
+
+`toml.parse` throws an exception in the case of a parsing error; such exceptions have a `line` and `column` property on them to
+help identify the offending text.
+
+```javascript
+try {
+...</pre></li>
+    </ul>
+
+
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.toml.compiler" id="apidoc.module.toml.compiler">module toml.compiler</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.toml.compiler.compile" id="apidoc.element.toml.compiler.compile">
+        function <span class="apidocSignatureSpan">toml.compiler.</span>compile
+        <span class="apidocSignatureSpan">(nodes)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function compile(nodes) {
+  var assignedPaths = [];
+  var valueAssignments = [];
+  var currentPath = "";
+  var data = {};
+  var context = data;
+  var arrayMode = false;
+
+  return reduce(nodes);
+
+  function reduce(nodes) {
+    var node;
+    for (var i in nodes) {
+      node = nodes[i];
+      switch (node.type) {
+      case "Assign":
+        assign(node);
+        break;
+      case "ObjectPath":
+        setPath(node);
+        break;
+      case "ArrayPath":
+        addTableArray(node);
+        break;
+      }
+    }
+
+    return data;
+  }
+
+  function genError(err, line, col) {
+    var ex = new Error(err);
+    ex.line = line;
+    ex.column = col;
+    throw ex;
+  }
+
+  function assign(node) {
+    var key = node.key;
+    var value = node.value;
+    var line = node.line;
+    var column = node.column;
+
+    var fullPath;
+    if (currentPath) {
+      fullPath = currentPath + "." + key;
+    } else {
+      fullPath = key;
+    }
+    if (typeof context[key] !== "undefined") {
+      genError("Cannot redefine existing key '" + fullPath + "'.", line, column);
+    }
+
+    context[key] = reduceValueNode(value);
+
+    if (!pathAssigned(fullPath)) {
+      assignedPaths.push(fullPath);
+      valueAssignments.push(fullPath);
+    }
+  }
+
+
+  function pathAssigned(path) {
+    return assignedPaths.indexOf(path) !== -1;
+  }
+
+  function reduceValueNode(node) {
+    if (node.type === "Array") {
+      return reduceArrayWithTypeChecking(node.value);
+    } else if (node.type === "InlineTable") {
+      return reduceInlineTableNode(node.value);
+    } else {
+      return node.value;
+    }
+  }
+
+  function reduceInlineTableNode(values) {
+    var obj = {};
+    for (var i = 0; i &lt; values.length; i++) {
+      var val = values[i];
+      if (val.value.type === "InlineTable") {
+        obj[val.key] = reduceInlineTableNode(val.value.value);
+      } else if (val.type === "InlineTableValue") {
+        obj[val.key] = reduceValueNode(val.value);
+      }
+    }
+
+    return obj;
+  }
+
+  function setPath(node) {
+    var path = node.value;
+    var quotedPath = path.map(quoteDottedString).join(".");
+    var line = node.line;
+    var column = node.column;
+
+    if (pathAssigned(quotedPath)) {
+      genError("Cannot redefine existing key '" + path + "'.", line, column);
+    }
+    assignedPaths.push(quotedPath);
+    context = deepRef(data, path, {}, line, column);
+    currentPath = path;
+  }
+
+  function addTableArray(node) {
+    var path = node.value;
+    var quotedPath = path.map(quoteDottedString).join(".");
+    var line = node.line;
+    var column = node.column;
+
+    if (!pathAssigned(quotedPath)) {
+      assignedPaths.push(quotedPath);
+    }
+    assignedPaths = assignedPaths.filter(function(p) {
+      return p.indexOf(quotedPath) !== 0;
+    });
+    assignedPaths.push(quotedPath);
+    context = deepRef(data, path, [], line, column);
+    currentPath = quotedPath;
+
+    if (context instanceof Array) {
+      var newObj = {};
+      context.push(newObj);
+      context = newObj;
+    } else {
+      genError("Cannot redefine existing key '" + path + "'.", line, column);
+    }
+  }
+
+  // Given a path 'a.b.c', create (as necessary) `start.a`,
+  // `start.a.b`, and `start.a.b.c`, assigning `value` to `start.a.b.c`.
+  // If `a` or `b` are arrays and have items in them, the last item in the
+  // array is used as the context for the next sub-path.
+  function deepRef(start, keys, value, line, column) {
+    var key;
+    var traversed = [];
+    var traversedPath = "";
+    var path = keys.join(".");
+    var ctx = start;
+    var keysLen = keys.length;
+
+    for (var i in keys) {
+      key = keys[i];
+      traversed.push(key);
+      traversedPath = traversed.join(".");
+      if (typeof ctx[key] === "undefined") {
+        if (i === String(keysLen - 1)) {
+          ctx[key] = value;
+        } else {
+          ctx[key] = {};
+        }
+      } else if (i !== keysLen - 1 &amp;&amp; valueAssignments.indexOf(traversedPath) &gt; -1) {
+        // already a non-object value at key, can't be used as part of a new path
+        genError("Cannot redefine existing key '" + traversedPath + "'.", line, column);
+      }
+
+      ctx = ctx ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+var parser = require('./lib/parser');
+var compiler = require('./lib/compiler');
+
+module.exports = {
+  parse: function(input) {
+    var nodes = parser.parse(input.toString());
+    return compiler.<span class="apidocCodeKeywordSpan">compile</span>(nodes);
+  }
+};
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.toml.parser" id="apidoc.module.toml.parser">module toml.parser</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.toml.parser.SyntaxError" id="apidoc.element.toml.parser.SyntaxError">
+        function <span class="apidocSignatureSpan">toml.parser.</span>SyntaxError
+        <span class="apidocSignatureSpan">(message, expected, found, offset, line, column)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function SyntaxError(message, expected, found, offset, line, column) {
+  this.message  = message;
+  this.expected = expected;
+  this.found    = found;
+  this.offset   = offset;
+  this.line     = line;
+  this.column   = column;
+
+  this.name     = "SyntaxError";
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.toml.parser.parse" id="apidoc.element.toml.parser.parse">
+        function <span class="apidocSignatureSpan">toml.parser.</span>parse
+        <span class="apidocSignatureSpan">(input)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function parse(input) {
+  var options = arguments.length &gt; 1 ? arguments[1] : {},
+
+      peg$FAILED = {},
+
+      peg$startRuleFunctions = { start: peg$parsestart },
+      peg$startRuleFunction  = peg$parsestart,
+
+      peg$c0 = [],
+      peg$c1 = function() { return nodes },
+      peg$c2 = peg$FAILED,
+      peg$c3 = "#",
+      peg$c4 = { type: "literal", value: "#", description: "\"#\"" },
+      peg$c5 = void 0,
+      peg$c6 = { type: "any", description: "any character" },
+      peg$c7 = "[",
+      peg$c8 = { type: "literal", value: "[", description: "\"[\"" },
+      peg$c9 = "]",
+      peg$c10 = { type: "literal", value: "]", description: "\"]\"" },
+      peg$c11 = function(name) { addNode(node('ObjectPath', name, line, column)) },
+      peg$c12 = function(name) { addNode(node('ArrayPath', name, line, column)) },
+      peg$c13 = function(parts, name) { return parts.concat(name) },
+      peg$c14 = function(name) { return [name] },
+      peg$c15 = function(name) { return name },
+      peg$c16 = ".",
+      peg$c17 = { type: "literal", value: ".", description: "\".\"" },
+      peg$c18 = "=",
+      peg$c19 = { type: "literal", value: "=", description: "\"=\"" },
+      peg$c20 = function(key, value) { addNode(node('Assign', value, line, column, key)) },
+      peg$c21 = function(chars) { return chars.join('') },
+      peg$c22 = function(node) { return node.value },
+      peg$c23 = "\"\"\"",
+      peg$c24 = { type: "literal", value: "\"\"\"", description: "\"\\\"\\\"\\\"\"" },
+      peg$c25 = null,
+      peg$c26 = function(chars) { return node('String', chars.join(''), line, column) },
+      peg$c27 = "\"",
+      peg$c28 = { type: "literal", value: "\"", description: "\"\\\"\"" },
+      peg$c29 = "'''",
+      peg$c30 = { type: "literal", value: "'''", description: "\"'''\"" },
+      peg$c31 = "'",
+      peg$c32 = { type: "literal", value: "'", description: "\"'\"" },
+      peg$c33 = function(char) { return char },
+      peg$c34 = function(char) { return char},
+      peg$c35 = "\\",
+      peg$c36 = { type: "literal", value: "\\", description: "\"\\\\\"" },
+      peg$c37 = function() { return '' },
+      peg$c38 = "e",
+      peg$c39 = { type: "literal", value: "e", description: "\"e\"" },
+      peg$c40 = "E",
+      peg$c41 = { type: "literal", value: "E", description: "\"E\"" },
+      peg$c42 = function(left, right) { return node('Float', parseFloat(left + 'e' + right), line, column) },
+      peg$c43 = function(text) { return node('Float', parseFloat(text), line, column) },
+      peg$c44 = "+",
+      peg$c45 = { type: "literal", value: "+", description: "\"+\"" },
+      peg$c46 = function(digits) { return digits.join('') },
+      peg$c47 = "-",
+      peg$c48 = { type: "literal", value: "-", description: "\"-\"" },
+      peg$c49 = function(digits) { return '-' + digits.join('') },
+      peg$c50 = function(text) { return node('Integer', parseInt(text, 10), line, column) },
+      peg$c51 = "true",
+      peg$c52 = { type: "literal", value: "true", description: "\"true\"" },
+      peg$c53 = function() { return node('Boolean', true, line, column) },
+      peg$c54 = "false",
+      peg$c55 = { type: "literal", value: "false", description: "\"false\"" },
+      peg$c56 = function() { return node('Boolean', false, line, column) },
+      peg$c57 = function() { return node('Array', [], line, column) },
+      peg$c58 = function(value) { return node('Array', value ? [value] : [], line, column) },
+      peg$c59 = function(values) { return node('Array', values, line, column) },
+      peg$c60 = function(values, value) { return node('Array', values.concat(value), line, column) },
+      peg$c61 = function(value) { return value },
+      peg$c62 = ",",
+      peg$c63 = { type: "literal", value: ",", description: "\",\"" },
+      peg$c64 = "{",
+      peg$c65 = { type: "literal", value: "{", description: "\"{\"" },
+      peg$c66 = "}",
+      peg$c67 = { type: "literal", value: "}", description: "\"}\"" },
+      peg$c68 = function(values) { return node('InlineTable', values, line, column) },
+      peg$c69 = function(key, value) { return node('InlineTableV ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+### Standalone
+
+Say you have some awesome TOML in a variable called `someTomlString`. Maybe it came from the web; maybe it came from a file; wherever
+ it came from, it came asynchronously! Let's turn that sucker into a JavaScript object.
+
+```javascript
+var toml = require('toml');
+var data = toml.<span class="apidocCodeKeywordSpan">parse</span>(someTomlString);
+console.dir(data);
+```
+
+`toml.parse` throws an exception in the case of a parsing error; such exceptions have a `line` and `column` property on them to
+help identify the offending text.
+
+```javascript
+try {
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
