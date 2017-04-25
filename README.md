@@ -1,6 +1,6 @@
 # npmdoc-toml
 
-#### api documentation for  toml (v2.3.2)  [![npm package](https://img.shields.io/npm/v/npmdoc-toml.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-toml) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-toml.svg)](https://travis-ci.org/npmdoc/node-npmdoc-toml)
+#### basic api documentation for  [toml (v2.3.2)](https://github.com/BinaryMuse/toml-node#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-toml.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-toml) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-toml.svg)](https://travis-ci.org/npmdoc/node-npmdoc-toml)
 
 #### TOML parser for Node.js (parses TOML spec v0.4.0)
 
@@ -21,28 +21,51 @@
 ```json
 
 {
-    "name": "toml",
-    "version": "2.3.2",
-    "description": "TOML parser for Node.js (parses TOML spec v0.4.0)",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "scripts": {
-        "build": "pegjs --cache src/toml.pegjs lib/parser.js",
-        "test": "jshint lib/compiler.js && nodeunit test/test_*.js",
-        "prepublish": "npm run build"
+    "author": {
+        "name": "Michelle Tilley"
     },
-    "repository": "git://github.com/BinaryMuse/toml-node.git",
-    "keywords": [
-        "toml",
-        "parser"
-    ],
-    "author": "Michelle Tilley <michelle@michelletilley.net>",
-    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/BinaryMuse/toml-node/issues"
+    },
+    "dependencies": {},
+    "description": "TOML parser for Node.js (parses TOML spec v0.4.0)",
     "devDependencies": {
         "jshint": "*",
         "nodeunit": "~0.9.0",
         "pegjs": "~0.8.0"
-    }
+    },
+    "directories": {},
+    "dist": {
+        "shasum": "5eded5ca42887924949fd06eb0e955656001e834",
+        "tarball": "https://registry.npmjs.org/toml/-/toml-2.3.2.tgz"
+    },
+    "gitHead": "ab4ed8fce1c74ed4cca4b9462d2135d4f21c6772",
+    "homepage": "https://github.com/BinaryMuse/toml-node#readme",
+    "keywords": [
+        "toml",
+        "parser"
+    ],
+    "license": "MIT",
+    "main": "index.js",
+    "maintainers": [
+        {
+            "name": "binarymuse"
+        }
+    ],
+    "name": "toml",
+    "optionalDependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/BinaryMuse/toml-node.git"
+    },
+    "scripts": {
+        "build": "pegjs --cache src/toml.pegjs lib/parser.js",
+        "prepublish": "npm run build",
+        "test": "jshint lib/compiler.js && nodeunit test/test_*.js"
+    },
+    "types": "index.d.ts",
+    "version": "2.3.2",
+    "bin": {}
 }
 ```
 
