@@ -47,7 +47,7 @@
 }
 </style>
 <h1>api documentation for
-    <a>toml (v2.3.2)</a>
+    <a href="https://github.com/BinaryMuse/toml-node#readme">toml (v2.3.2)</a>
 </h1>
 <h4>TOML parser for Node.js (parses TOML spec v0.4.0)</h4>
 <div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
@@ -130,23 +130,17 @@
   return compiler.compile(nodes);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+var fs = require('fs');
+var data = fs.readFileSync('./test/example.toml', 'utf8');
 
-### Standalone
+var iterations = 1000;
 
-Say you have some awesome TOML in a variable called `someTomlString`. Maybe it came from the web; maybe it came from a file; wherever
- it came from, it came asynchronously! Let's turn that sucker into a JavaScript object.
-
-```javascript
-var toml = require('toml');
-var data = toml.<span class="apidocCodeKeywordSpan">parse</span>(someTomlString);
-console.dir(data);
-```
-
-`toml.parse` throws an exception in the case of a parsing error; such exceptions have a `line` and `column` property on them to
-help identify the offending text.
-
-```javascript
-try {
+var start = new Date();
+for(var i = 0; i &lt; iterations; i++) {
+  toml.<span class="apidocCodeKeywordSpan">parse</span>(data);
+}
+var end = new Date();
+console.log("%s iterations in %sms", iterations, end - start);
 ...</pre></li>
     </ul>
 
@@ -454,23 +448,17 @@ module.exports = {
       peg$c68 = function(values) { return node('InlineTable', values, line, column) },
       peg$c69 = function(key, value) { return node('InlineTableV ...</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+var fs = require('fs');
+var data = fs.readFileSync('./test/example.toml', 'utf8');
 
-### Standalone
+var iterations = 1000;
 
-Say you have some awesome TOML in a variable called `someTomlString`. Maybe it came from the web; maybe it came from a file; wherever
- it came from, it came asynchronously! Let's turn that sucker into a JavaScript object.
-
-```javascript
-var toml = require('toml');
-var data = toml.<span class="apidocCodeKeywordSpan">parse</span>(someTomlString);
-console.dir(data);
-```
-
-`toml.parse` throws an exception in the case of a parsing error; such exceptions have a `line` and `column` property on them to
-help identify the offending text.
-
-```javascript
-try {
+var start = new Date();
+for(var i = 0; i &lt; iterations; i++) {
+  toml.<span class="apidocCodeKeywordSpan">parse</span>(data);
+}
+var end = new Date();
+console.log("%s iterations in %sms", iterations, end - start);
 ...</pre></li>
     </ul>
 
